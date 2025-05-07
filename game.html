@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مؤثرات زر إطلاق النار</title>
+    <style>
+        #gameCanvas {
+            border: 2px solid black;
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>اختبار ضغط زر "إطلاق النار"</h1>
+    <canvas id="gameCanvas" width="500" height="500"></canvas>
+
+    <script>
+        // الوصول إلى الـ Canvas
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // متغيرات لتتبع حالة الإطلاق
+        let isShooting = false;
+        let bullet = { x: 250, y: 450, width: 5, height: 10, speed: 5 };
+
+        // رسم اللاعب
+        function drawPlayer() {
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(230, 450, 40, 40);
+        }
+
+        // رسم الرصاصة
+        function drawBullet() {
+            if (isShooting) {
+                ctx.fillStyle = 'red';
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+                bullet.y -= bullet.speed; // حركة الرصاصة للأعلى
+                if (bullet.y < 0) { // إذا خرجت الرصاصة من الشاشة
+                    isShooting = false; // إعادة تعيين حالة الإطلاق
+                    bullet.y = 450; // إعادة الرصاصة للموقع الأساسي
+                }
+            }
+        }
+
+        // التعامل مع حدث الضغط على الزر "إطلاق النار"
+        window.addEventListener('keydown', (event) => {
+            if (event.key === ' ') { // عند الضغط على المسافة (التي تمثل إطلاق النار)
+                if (!isShooting) { // منع إطلاق النار إذا كانت الرصاصة قد خرجت بالفعل
+                    isShooting = true;
+                    bullet.y = 450; // إعادة الرصاصة إلى الموقع الأساسي
+                }
+            }
+        });
+
+        // وظيفة لتحديث الرسم على الشاشة
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // مسح الشاشة
+            drawPlayer(); // رسم اللاعب
+            drawBullet(); // رسم الرصاصة
+            requestAnimationFrame(update); // تحديث الرسم
+        }
+
+        // بدء اللعبة
+        update();
+    </script>
+</body>
+</html>
